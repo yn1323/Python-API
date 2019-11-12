@@ -8,3 +8,8 @@ class Pog:
       self.scr.getString('td.money'), \
       self.scr.getString('td.recent'), \
       self.scr.getUrl('td.user > a')
+    print(self)
+
+
+# a = Pog("http://pogstarion.com/groupuserlist.do?group_num=0526013548")
+# print(a.users)
