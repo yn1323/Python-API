@@ -13,9 +13,11 @@ beautifulsoup4 = "*"
 requests = "*"
 flask = "*"
 gunicorn = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.6"
 
 [scripts]
+start = "python run.py"
 test = "python scraping/pog.py"
