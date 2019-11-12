@@ -12,7 +12,7 @@ rope = "*"
 beautifulsoup4 = "*"
 requests = "*"
 flask = "*"
-gunicorn = "==19.9.0"
+gunicorn = "*"
 
 [requires]
 python_version = "3.6"
