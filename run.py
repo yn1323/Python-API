@@ -14,9 +14,7 @@ load_dotenv(dotenv_path)
 
 @app.route("/")
 def hello_world():
-  a = pog.Pog(os.environ.get("URL"))
-  print(a.users)
-  return "Hello, Worlo!\n"
+  return pog.Pog(os.environ.get("URL")).top()
 
 # このif文が重要
 if __name__ == "__main__":
