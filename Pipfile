@@ -20,4 +20,4 @@ python_version = "3.6"
 
 [scripts]
 start = "python run.py"
-test = "python scraping/pog.py"
+test = "python test.py"
