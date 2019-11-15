@@ -1,5 +1,3 @@
-from dotenv import load_dotenv
-from os.path import join, dirname
 import urllib.request
 import os,json
 from flask import Flask, request
@@ -9,9 +7,6 @@ from common.msg import Msg
 
 # Flask
 app = Flask(__name__)
-# .env
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
 
 # JSON Convert
 def conv(req):
@@ -26,8 +21,8 @@ def urlChecker(url):
     return False
 
 @app.route('/')
-def hello_world():
-  return pog.Pog(os.environ.get('URL')).top()
+def root():
+  return "Hello"
 
 @app.route('/pogTop', methods=['POST'])
 def pogTop():
