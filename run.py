@@ -7,6 +7,8 @@ from common.msg import Msg
 
 # Flask
 app = Flask(__name__)
+# 戻りのJSONをasciiにしない
+app.config['JSON_AS_ASCII'] = False
 
 # JSON Convert
 def conv(req):
