@@ -1,8 +1,10 @@
 from scraping.scraping import Scraping
+from common.msg import Msg
 
 class Pog(Scraping):
   def __init__(self, url):
     super().__init__(url)
+    self.POGSTARION = "pogstarion.com"
     self.users, self.prizes, self.recents, self.urls = \
       self.getString('td.user'), \
       self.getString('td.money'), \
@@ -33,9 +35,9 @@ class Pog(Scraping):
       cnt += 1
     return tbody
   def top(self):
+    if not self.parsedUrl.netloc == self.POGSTARION:
+      return {"error": Msg.pogMsg("URL_ERROR")}
     return {
       'header' : self.topHeader(),
       'tbody' : self.topBody()
     }
-      
-

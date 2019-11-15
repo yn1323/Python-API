@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 import re
+from common.msg import Msg
 
 class Scraping:
   def __init__(self, url):
