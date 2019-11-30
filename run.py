@@ -1,14 +1,17 @@
 import urllib.request
 import os,json
 from flask import Flask, request
+from flask_cors import CORS
 # パッケージ
 from scraping.pog import Pog
 from common.msg import Msg
+
 
 # Flask
 app = Flask(__name__)
 # 戻りのJSONをasciiにしない
 app.config['JSON_AS_ASCII'] = False
+CORS(app)
 
 # JSON Convert
 def conv(req):
