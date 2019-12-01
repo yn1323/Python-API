@@ -125,6 +125,8 @@ class Pog(Scraping):
     return sorted(tbody, key=lambda x:x['prize'], reverse=True)
     
   def horse(self):
+    if not self.parsedUrl.netloc == self.POGSTARION:
+      return {"error": Msg.pogMsg("URL_ERROR")}
     return {
       'header': self.horseHeader(),
       'tbody': self.horseBody()
