@@ -33,7 +33,6 @@ def root():
 def pogTop():
   data = conv(request)
   url = data['url']
-  print(urlChecker(url))
   if not urlChecker(url):
     return {'ERROR': Msg.common('URL_NOT_FOUND')}
   return Pog(url).top()
