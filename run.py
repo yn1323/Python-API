@@ -46,6 +46,15 @@ def pogEachP():
     return {'ERROR': Msg.common('URL_NOT_FOUND')}
   return Pog(url).eachP()
 
+
+@app.route('/pogHorse', methods=['POST'])
+def pogHorse():
+  data = conv(request)
+  url = data['url']
+  if not urlChecker(url):
+    return {'ERROR': Msg.common('URL_NOT_FOUND')}
+  return Pog(url).horse()
+
 # このif文が重要
 if __name__ == '__main__':
   # debug=Trueだと自動でリロードする
