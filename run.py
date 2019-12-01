@@ -37,6 +37,15 @@ def pogTop():
     return {'ERROR': Msg.common('URL_NOT_FOUND')}
   return Pog(url).top()
 
+
+@app.route('/pogEachP', methods=['POST'])
+def pogEachP():
+  data = conv(request)
+  url = data['url']
+  if not urlChecker(url):
+    return {'ERROR': Msg.common('URL_NOT_FOUND')}
+  return Pog(url).eachP()
+
 # このif文が重要
 if __name__ == '__main__':
   # debug=Trueだと自動でリロードする

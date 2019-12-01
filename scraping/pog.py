@@ -5,11 +5,6 @@ class Pog(Scraping):
   def __init__(self, url):
     super().__init__(url)
     self.POGSTARION = "pogstarion.com"
-    self.users, self.prizes, self.recents, self.urls = \
-      self.getString('td.user'), \
-      self.getString('td.money'), \
-      self.getString('td.recent'), \
-      self.getUrl('td.user > a')
   def topHeader(self):
     # 配列をアンパック
     user,*_ = self.getString('th.user');
@@ -22,10 +17,12 @@ class Pog(Scraping):
         # self.getString('th.recent')
         {'text': '直近', 'value': 'recent'}
     ]
-
   def topBody(self):
+    all = zip(self.getString('td.user'), 
+              self.getString('td.money'),
+              self.getString('td.recent'),
+              self.getUrl('td.user > a'))
     tbody = []
-    all = zip(self.users, self.prizes, self.recents, self.urls)
     cnt = 1
     for user, prize, recent, url in all:
       tbody.append({
@@ -43,4 +40,57 @@ class Pog(Scraping):
     return {
       'header' : self.topHeader(),
       'tbody' : self.topBody()
+    }
+  def eachPHeader(self):
+    horse,*_ = self.getString('th.bamei')
+    birth,*_ = self.getString('th.birthyear')
+    house,*_ = self.getString('th.zaikyuflag')
+    result,*_ = self.getString('th.sogochakukaisu1')
+    prize,*_ = self.getString('th.gokei_syokin')
+    recent,*_ = self.getString('th.new_syokin')
+    coach,*_ = self.getString('th.chokyosiryakusyo')
+    blood,*_ = self.getString('th.ketto')
+    return [
+        {'text': '順位', 'value': 'order'},
+        {'text': horse, 'value': 'horse'},
+        {'text': birth, 'value': 'birth'},
+        {'text': house, 'value': 'house'},
+        {'text': result, 'value': 'result'},
+        {'text': prize, 'value': 'prize'},
+        {'text': recent, 'value': 'recent'},
+        {'text': coach, 'value': 'coach'},
+        {'text': blood, 'value': 'blood'},
+    ]
+  def eachPBody(self):
+    all = zip(self.getString(self.eachPtd(2)),
+              self.getString(self.eachPtd(4)),
+              self.getString(self.eachPtd(5)),
+              self.getString(self.eachPtd(6)),
+              self.getString(self.eachPtd(8)),
+              self.getString(self.eachPtd(9)),
+              self.getString(self.eachPtd(10)),
+              self.getString(self.eachPtd(12)),
+              )
+    tbody = []
+    cnt = 1
+    for horse, birth, house, result, prize, recent, coach, blood in all:
+      tbody.append({
+          'order': cnt,
+          'horse': horse,
+          'birth': birth,
+          'house': house,
+          'result': result,
+          'prize': prize,
+          'recent': recent,
+          'coach': coach,
+          'blood': blood,
+      })
+      cnt += 1
+    return tbody
+  def eachPtd(self, i):
+    return '.umalist_comment > tbody > tr > td:nth-child({0})'.format(i)
+  def eachP(self):
+    return {
+        'header': self.eachPHeader(),
+        'tbody': self.eachPBody()
     }
