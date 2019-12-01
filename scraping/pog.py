@@ -11,13 +11,16 @@ class Pog(Scraping):
       self.getString('td.recent'), \
       self.getUrl('td.user > a')
   def topHeader(self):
+    # 配列をアンパック
+    user,*_ = self.getString('th.user');
+    prize, *_ = self.getString('th.money')
     return [
-        '順位',
-        *self.getString('th.user'),
-        *self.getString('th.money'),
+        {'text': '順位', 'value': 'order'},
+        {'text': user, 'value': 'user'},
+        {'text': prize, 'valye': 'prize'},
         # なぜか認識しないため直書き
         # self.getString('th.recent')
-        '直近'
+        {'text': '直近', 'value': 'recent'}
     ]
 
   def topBody(self):
