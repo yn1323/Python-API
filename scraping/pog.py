@@ -17,7 +17,7 @@ class Pog(Scraping):
     return [
         {'text': '順位', 'value': 'order'},
         {'text': user, 'value': 'user'},
-        {'text': prize, 'valye': 'prize'},
+        {'text': prize, 'value': 'prize'},
         # なぜか認識しないため直書き
         # self.getString('th.recent')
         {'text': '直近', 'value': 'recent'}
