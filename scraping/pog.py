@@ -89,6 +89,7 @@ class Pog(Scraping):
     return tbody
   def eachPtd(self, i):
     return '.umalist_comment > tbody > tr > td:nth-child({0})'.format(i)
+  
   def eachP(self):
     # 表の関係上一部データをコメントで省略する
     # ヘッダのみ削除しているので、データとしては送っている
@@ -114,7 +115,7 @@ class Pog(Scraping):
       horses = scr.getString(self.eachPtd(2))
       prizes = scr.getString(self.eachPtd(8))
       # 1行ずつのデータを作成
-      for (horse, prize) in zip(horses, prizes):
+      for i, (horse, prize) in enumerate(zip(horses, prizes), 1):
         tbody.append({
           'user': user,
           'horse': horse,
@@ -130,4 +131,78 @@ class Pog(Scraping):
     return {
       'header': self.horseHeader(),
       'tbody': self.horseBody()
+    }
+
+
+  def getHouseHorseNames(self):
+    urls = self.getUrl('td.user > a')
+    users = self.getString('td.user')
+    runners = []
+    for url, user in zip(urls, users):
+      scr = Scraping(url)
+      horses = scr.getString(self.eachPtd(2))
+      houses = scr.getString(self.eachPtd(5))
+      horseUrls = scr.getUrl(self.eachPtd(2) + " > a")
+      for horse, house, horseUrl in zip(horses, houses, horseUrls):
+        if not house == 'Ｏ':
+          continue
+        runners.append({'user': user, 'horse': horse})
+    return runners
+
+  # targetHorses [A,B,C]
+  # compareHorses [{name: ,horse:},{..}...]
+  # return matched index of compareHorses
+  def hasMatchingHorse(self, targetHorses, compareHorses, favs, raceInfo):
+    willRaceIndex = []
+    for i, (targetHorse, fav) in enumerate(zip(targetHorses,favs)):
+      for compareHorse in compareHorses:
+        if compareHorse['horse'] == targetHorse:
+          compareHorse.update(**raceInfo)
+          compareHorse['fav'] = fav
+    return compareHorses
+
+  def scrapeAllRace(self, pogHorses):
+    raceListUrls = Scraping('https://race.netkeiba.com/?pid=race_list').getUrl('#race_list_header > dd > a')
+    # 未発走のみにする
+    futureRaceUrls = list(filter(lambda n: not 'id=p' in n, raceListUrls))
+    for raceDateUrl in futureRaceUrls:
+      racesUrl = Scraping(raceDateUrl).getUrl('.racename > a')
+      for raceUrl in racesUrl:
+        race = Scraping(raceUrl)
+        horseNames = race.getString(".horsename > div > a")
+        favs = race.getString(".bml")
+        raceInfo = {
+            'place': race.getString('.race_place > ul > li > .active')[0],
+            'round': race.getString('.race_num > ul > li > .active')[0],
+            'title': race.getString('.racedata > dd > h1'),
+            'distance': race.getString('.racedata > dd > p')[0],
+            'detail': race.getString('.racedata > dd > p')[1],
+            'date': race.getString('.race_otherdata > p')[0],
+            'prize': race.getString('.race_otherdata > p')[3].strip('本賞金：')
+        }
+        self.hasMatchingHorse(horseNames, pogHorses, favs, raceInfo)
+    return pogHorses
+
+  def race(self):
+    if not self.parsedUrl.netloc == self.POGSTARION:
+      return {"error": Msg.pogMsg("URL_ERROR")}
+    
+    names = self.getHouseHorseNames()
+    runningHorse = self.scrapeAllRace(names)
+    tbody = list(filter(lambda n: 'prize' in n, runningHorse))
+    tbody = sorted(tbody, key=lambda x: x['date'], reverse=False)
+    return {
+        'header': [
+            {'text': 'ユーザ名', 'value': 'user'},
+            {'text': '開催日', 'value': 'date'},
+            {'text': '開催地', 'value': 'place'},
+            {'text': 'レース', 'value': 'round'},
+            {'text': 'タイトル', 'value': 'title'},
+            {'text': '距離', 'value': 'distance'},
+            {'text': '馬名', 'value': 'horse'},
+            {'text': '人気', 'value': 'fav'},
+            {'text': '賞金', 'value': 'prize'},
+            {'text': '詳細', 'value': 'detail'},
+        ],
+        'tbody': tbody
     }
