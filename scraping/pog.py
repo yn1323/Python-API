@@ -1,6 +1,7 @@
 from scraping.scraping import Scraping
 from common.msg import Msg
 
+# ベタ書き
 class Pog(Scraping):
   def __init__(self, url):
     super().__init__(url)
@@ -153,7 +154,6 @@ class Pog(Scraping):
   # compareHorses [{name: ,horse:},{..}...]
   # return matched index of compareHorses
   def hasMatchingHorse(self, targetHorses, compareHorses, favs, raceInfo):
-    print('hasMatchingHorse')
     willRaceIndex = []
     for i, (targetHorse, fav) in enumerate(zip(targetHorses,favs)):
       for compareHorse in compareHorses:
@@ -221,3 +221,18 @@ class Pog(Scraping):
         'urls': urls,
         'names':names
     }
+
+  def raceEach(self, horse):
+      horseNames = self.getString(".horsename > div > a")
+      favs = self.getString(".bml")
+      raceInfo = {
+          'place': self.getString('.race_place > ul > li > .active')[0],
+          'round': self.getString('.race_num > ul > li > .active')[0],
+          'title': self.getString('.racedata > dd > h1'),
+          'distance': self.getString('.racedata > dd > p')[0],
+          'detail': self.getString('.racedata > dd > p')[1],
+          'date': self.getString('.race_otherdata > p')[0],
+          'prize': self.getString('.race_otherdata > p')[3].strip('本賞金：')
+      }
+      return {'raceHorse': self.hasMatchingHorse(horseNames, horse, favs, raceInfo)}
+    

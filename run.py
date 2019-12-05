@@ -64,6 +64,14 @@ def pogRace():
     return {'ERROR': Msg.common('URL_NOT_FOUND')}
   return Pog(url).race()
 
+
+@app.route('/pogRaceEach', methods=['POST'])
+def pogRaceEach():
+  data = conv(request)
+  url = data['url']
+  horse = data['horse']
+  return Pog(url).raceEach(horse)
+
 # このif文が重要
 if __name__ == '__main__':
   # debug=Trueだと自動でリロードする
