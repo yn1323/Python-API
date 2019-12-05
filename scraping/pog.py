@@ -153,6 +153,7 @@ class Pog(Scraping):
   # compareHorses [{name: ,horse:},{..}...]
   # return matched index of compareHorses
   def hasMatchingHorse(self, targetHorses, compareHorses, favs, raceInfo):
+    print('hasMatchingHorse')
     willRaceIndex = []
     for i, (targetHorse, fav) in enumerate(zip(targetHorses,favs)):
       for compareHorse in compareHorses:
@@ -162,12 +163,16 @@ class Pog(Scraping):
     return compareHorses
 
   def scrapeAllRace(self, pogHorses):
-    raceListUrls = Scraping('https://race.netkeiba.com/?pid=race_list').getUrl('#race_list_header > dd > a')
+    print('scrapeAllRace')
+    raceListUrls = Scraping(
+        'https://race.netkeiba.com/?pid=race_list').getUrl('#race_list_header > dd > a')
+    print('accessed')
     # 未発走のみにする
     futureRaceUrls = list(filter(lambda n: not 'id=p' in n, raceListUrls))
     for raceDateUrl in futureRaceUrls:
       racesUrl = Scraping(raceDateUrl).getUrl('.racename > a')
       for raceUrl in racesUrl:
+        print(raceUrl)
         race = Scraping(raceUrl)
         horseNames = race.getString(".horsename > div > a")
         favs = race.getString(".bml")
