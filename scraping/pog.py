@@ -208,7 +208,8 @@ class Pog(Scraping):
           'distance': self.getString('.racedata > dd > p')[0],
           'detail': self.getString('.racedata > dd > p')[1],
           'date': self.getString('.race_otherdata > p')[0],
-          'prize': self.getString('.race_otherdata > p')[3].strip('本賞金：')
+          'prize': self.getString('.race_otherdata > p')[3].strip('本賞金：'),
+          'url': self.url
       }
       return {'raceHorse': self.hasMatchingHorse(horseNames, horse, favs, raceInfo)}
     
