@@ -163,16 +163,13 @@ class Pog(Scraping):
     return compareHorses
 
   def scrapeAllRace(self, pogHorses):
-    print('scrapeAllRace')
     raceListUrls = Scraping(
         'https://race.netkeiba.com/?pid=race_list').getUrl('#race_list_header > dd > a')
-    print('accessed')
     # 未発走のみにする
     futureRaceUrls = list(filter(lambda n: not 'id=p' in n, raceListUrls))
     for raceDateUrl in futureRaceUrls:
       racesUrl = Scraping(raceDateUrl).getUrl('.racename > a')
       for raceUrl in racesUrl:
-        print(raceUrl)
         race = Scraping(raceUrl)
         horseNames = race.getString(".horsename > div > a")
         favs = race.getString(".bml")
@@ -187,15 +184,27 @@ class Pog(Scraping):
         }
         self.hasMatchingHorse(horseNames, pogHorses, favs, raceInfo)
     return pogHorses
+  def getRaceUrls(self):
+    urls = []
+    raceListUrls = Scraping('https://race.netkeiba.com/?pid=race_list').getUrl('#race_list_header > dd > a')
+    # 未発走のみにする
+    futureRaceUrls = list(filter(lambda n: not 'id=p' in n, raceListUrls))
+    for raceDateUrl in futureRaceUrls:
+      racesUrl = Scraping(raceDateUrl).getUrl('.racename > a')
+      for raceUrl in racesUrl:
+        urls.append(raceUrl)
+    return urls
+
 
   def race(self):
     if not self.parsedUrl.netloc == self.POGSTARION:
       return {"error": Msg.pogMsg("URL_ERROR")}
     
     names = self.getHouseHorseNames()
-    runningHorse = self.scrapeAllRace(names)
-    tbody = list(filter(lambda n: 'prize' in n, runningHorse))
-    tbody = sorted(tbody, key=lambda x: x['date'], reverse=False)
+    urls = self.getRaceUrls()
+    # runningHorse = self.scrapeAllRace(names)
+    # tbody = list(filter(lambda n: 'prize' in n, runningHorse))
+    # tbody = sorted(tbody, key=lambda x: x['date'], reverse=False)
     return {
         'header': [
             {'text': 'ユーザ名', 'value': 'user'},
@@ -209,5 +218,6 @@ class Pog(Scraping):
             {'text': '賞金', 'value': 'prize'},
             {'text': '詳細', 'value': 'detail'},
         ],
-        'tbody': tbody
+        'urls': urls,
+        'names':names
     }
