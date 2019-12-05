@@ -162,28 +162,7 @@ class Pog(Scraping):
           compareHorse['fav'] = fav
     return compareHorses
 
-  def scrapeAllRace(self, pogHorses):
-    raceListUrls = Scraping(
-        'https://race.netkeiba.com/?pid=race_list').getUrl('#race_list_header > dd > a')
-    # 未発走のみにする
-    futureRaceUrls = list(filter(lambda n: not 'id=p' in n, raceListUrls))
-    for raceDateUrl in futureRaceUrls:
-      racesUrl = Scraping(raceDateUrl).getUrl('.racename > a')
-      for raceUrl in racesUrl:
-        race = Scraping(raceUrl)
-        horseNames = race.getString(".horsename > div > a")
-        favs = race.getString(".bml")
-        raceInfo = {
-            'place': race.getString('.race_place > ul > li > .active')[0],
-            'round': race.getString('.race_num > ul > li > .active')[0],
-            'title': race.getString('.racedata > dd > h1'),
-            'distance': race.getString('.racedata > dd > p')[0],
-            'detail': race.getString('.racedata > dd > p')[1],
-            'date': race.getString('.race_otherdata > p')[0],
-            'prize': race.getString('.race_otherdata > p')[3].strip('本賞金：')
-        }
-        self.hasMatchingHorse(horseNames, pogHorses, favs, raceInfo)
-    return pogHorses
+ 
   def getRaceUrls(self):
     urls = []
     raceListUrls = Scraping('https://race.netkeiba.com/?pid=race_list').getUrl('#race_list_header > dd > a')
@@ -202,9 +181,6 @@ class Pog(Scraping):
     
     names = self.getHouseHorseNames()
     urls = self.getRaceUrls()
-    # runningHorse = self.scrapeAllRace(names)
-    # tbody = list(filter(lambda n: 'prize' in n, runningHorse))
-    # tbody = sorted(tbody, key=lambda x: x['date'], reverse=False)
     return {
         'header': [
             {'text': 'ユーザ名', 'value': 'user'},
