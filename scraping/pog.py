@@ -205,7 +205,7 @@ class Pog(Scraping):
           'round': self.getString('.RaceNum')[0],
           'title': self.getString('.RaceName')[0],
           'distance': self.getString('.RaceData01 > span')[0],
-          'detail': self.getString('.RaceData02')[0],
+          'detail': f"{self.getString('.RaceData02 > span')[3]} {self.getString('.RaceData02 > span')[4]} {self.getString('.RaceData02 > span')[5]} {self.getString('.RaceData02 > span')[6]} {self.getString('.RaceData02 > span')[7]}",
           'date': self.getString("#RaceList_DateList > .Active > a")[0],
           'prize': self.getString('.RaceData02 > span')[8].strip('本賞金：:'),
           'url': self.url
