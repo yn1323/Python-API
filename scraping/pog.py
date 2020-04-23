@@ -1,5 +1,6 @@
 from scraping.scraping import Scraping
 from common.msg import Msg
+from common.common import Common
 
 # ベタ書き
 class Pog(Scraping):
@@ -165,16 +166,13 @@ class Pog(Scraping):
  
   def getRaceUrls(self):
     urls = []
-    raceListUrls = Scraping('https://race.netkeiba.com/?pid=race_list').getUrl('#race_list_header > dd > a')
-    # 未発走のみにする
-    futureRaceUrls = list(filter(lambda n: not 'id=p' in n, raceListUrls))
-    for raceDateUrl in futureRaceUrls:
-      racesUrl = Scraping(raceDateUrl).getUrl('.racename > a')
-      for raceUrl in racesUrl:
-        urls.append(raceUrl)
-    return urls
+    dates = Common.strWeekDays()
+    for date in dates:
+      raceListUrls = Scraping(f"https://race.netkeiba.com//top/race_list_sub.html?kaisai_date={date}").getUrl("a")
+      urls.extend(raceListUrls)
 
-
+    return [u.replace("../", "") for u in urls]
+  
   def race(self):
     if not self.parsedUrl.netloc == self.POGSTARION:
       return {"error": Msg.pogMsg("URL_ERROR")}
@@ -199,16 +197,17 @@ class Pog(Scraping):
     }
 
   def raceEach(self, horse):
-      horseNames = self.getString(".horsename > div > a")
-      favs = self.getString(".bml")
+      horseNames = self.getString(".HorseName > a")
+      # TODO: 非同期のため取得できていない
+      favs = self.getString(".Popular_Ninki > span")
       raceInfo = {
-          'place': self.getString('.race_place > ul > li > .active')[0],
-          'round': self.getString('.race_num > ul > li > .active')[0],
-          'title': self.getString('.racedata > dd > h1'),
-          'distance': self.getString('.racedata > dd > p')[0],
-          'detail': self.getString('.racedata > dd > p')[1],
-          'date': self.getString('.race_otherdata > p')[0],
-          'prize': self.getString('.race_otherdata > p')[3].strip('本賞金：'),
+          'place': self.getString('.RaceData02 > span')[0],
+          'round': self.getString('.RaceNum')[0],
+          'title': self.getString('.RaceName')[0],
+          'distance': self.getString('.RaceData01 > span')[0],
+          'detail': self.getString('.RaceData02')[0],
+          'date': self.getString("#RaceList_DateList > .Active > a")[0],
+          'prize': self.getString('.RaceData02 > span')[8].strip('本賞金：:'),
           'url': self.url
       }
       return {'raceHorse': self.hasMatchingHorse(horseNames, horse, favs, raceInfo)}

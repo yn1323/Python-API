@@ -15,7 +15,6 @@ flask = "*"
 gunicorn = "*"
 python-dotenv = "*"
 flask-cors = "*"
-chromedriver = "*"
 
 [requires]
 python_version = "3.6"
