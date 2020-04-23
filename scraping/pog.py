@@ -201,7 +201,7 @@ class Pog(Scraping):
       # TODO: 非同期のため取得できていない
       favs = self.getString(".Popular_Ninki > span")
       raceInfo = {
-          'place': self.getString('.RaceData02 > span')[0],
+          'place': self.getString('.RaceData02 > span')[1],
           'round': self.getString('.RaceNum')[0],
           'title': self.getString('.RaceName')[0],
           'distance': self.getString('.RaceData01 > span')[0],
